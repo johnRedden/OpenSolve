@@ -5,7 +5,7 @@
       "projectTypeName": "com.intel.xdk.projecttype.webapp",
       "src": "webapp/template-blank/sample.zip",
       "projectGuid": "6a06b58c-d313-47af-ae4c-7f0ce91ead76",
-      "lastModifiedDate": 1456097261892,
+      "lastModifiedDate": 1456101045476,
       "creationDate": 1456097261755
     },
     "XDK-app-designer": "false",
@@ -44,7 +44,7 @@
         "excludedLibraries_": "",
         "iosProvs_": [],
         "cordovaCLIVersion_": "5.1.1",
-        "crosswalkVersion_": "14",
+        "crosswalkVersion_": "15",
         "appVersion_": "0.0.1",
         "appAuthor_": "Intel XDK",
         "appDescription_": "Use this template to start with a simple index.html file for creating mobile web apps.",
