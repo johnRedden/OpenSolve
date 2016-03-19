@@ -3,8 +3,13 @@
 <html>
 	<head>
 		<title>Beginner Stuff</title>
+		<link rel="stylesheet" href="css/mathquill.css"/>
 		<!-- You can get this link from https://jquery.com/download/ /-->
 		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="//cdn.rawgit.com/jiggzson/nerdamer/master/nerdamer.core.js"></script>
+		<script src="//cdn.rawgit.com/jiggzson/nerdamer/master/Calculus.js"></script>
+		
+		<script src="js/mathquill-basic.js"></script>
 		<style>
 			#output{
 				
@@ -19,23 +24,124 @@
 	</head>
 	<body>
 		<center>
-			<input type="text" class="input" />
-			<h3>ID-Oriented Output</h3>
-			<div id="output">NO OUTPUT YET</div>
-			<div id="output">NO OUTPUT YET</div>
-			<div id="output">NO OUTPUT YET</div>
-			
-			<h3>Class-Oriented Output</h3>
+			<input type="text" class="input" autofocus/>
 			<div class="output">NO OUTPUT YET</div>
-			<div class="output">NO OUTPUT YET</div>
-			<div class="output">NO OUTPUT YET</div>
-			
-			<!-- Should evaluate, but only +-*/ /-->
-			<h3>Evaluated Output</h3>
-			<div class="output eval">NO OUTPUT YET</div>
 		</center>
 		<script>
+			// Variables
+			var	knownFuncs=	[
+				{
+					name:	"sin",
+					paste:	"sin(",
+					size:	3
+				},
+				{
+					name:	"cos",
+					paste:	"cos(",
+					size:	3
+				},
+				{
+					name:	"tan",
+					paste:	"tan(",
+					size:	3
+				},
+				{
+					name:	"csc",
+					paste:	"csc(",
+					size:	3
+				},
+				{
+					name:	"sec",
+					paste:	"sec(",
+					size:	3
+				},
+				{
+					name:	"cot",
+					paste:	"cot(",
+					size:	3
+				},
+				{
+					name:	"sin(h",
+					paste:	"sinh(",
+					size:	5
+				},
+				{
+					name:	"cos(h",
+					paste:	"cosh(",
+					size:	5
+				},
+				{
+					name:	"tan(h",
+					paste:	"tanh(",
+					size:	5
+				},
+				{
+					name:	"csc(h",
+					paste:	"csch(",
+					size:	5
+				},
+				{
+					name:	"sec(h",
+					paste:	"sech(",
+					size:	5
+				},
+				{
+					name:	"cot(h",
+					paste:	"coth(",
+					size:	5
+				},
+				{
+					name:	"ln",
+					paste:	"ln(",
+					size:	2
+				},
+				{
+					name:	"log",
+					paste:	"log(",
+					size:	3
+				},
+				{
+					name:	"derive",
+					paste:	"derive[",
+					size:	6
+				}
+			];
 			
+			$(".input").keyup(function(args)	{
+				// Variables
+				var	input=	$(args.target);
+				var	output;
+				
+				console.log(args);
+				for(var i= 0; i< knownFuncs.length; i++)
+				{
+					if(args.which!= 8 && (args.which< 37 || args.which> 39) && hasKnownFunc(input, i))
+						easeParensOpen(input, input.val(), i);
+				}
+				
+				input=	input.val();
+				if(input.substr(0, 6)== "derive")
+					output=	nerdamer(input.substring(8, input.length-1));
+				else
+					output=	nerdamer(input);
+				$(".output").html(output.text());
+			});
+			
+			function hasKnownFunc(obj, index)
+			{
+				if(obj.val().substr(obj[0].selectionStart-knownFuncs[index].name.length, knownFuncs[index].name.length)== knownFuncs[index].name)
+					return true;
+			}
+			
+			function easeParensOpen(obj, val, index)
+			{
+				// Variables
+				var	ns=	obj[0].selectionStart+(knownFuncs[index].paste.length-knownFuncs[index].name.length);
+				
+				obj.val(val.substr(0, obj[0].selectionStart-knownFuncs[index].size)+knownFuncs[index].paste+val.substr(obj[0].selectionStart));
+				obj[0].selectionStart=	ns;
+				obj[0].selectionEnd=	obj[0].selectionStart;
+			}
 		</script>
 	</body>
 </html>
