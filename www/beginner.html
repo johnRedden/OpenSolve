@@ -5,9 +5,9 @@
 		<title>Beginner Stuff</title>
 		<link rel="stylesheet" href="css/mathquill.css"/>
 		<!-- You can get this link from https://jquery.com/download/ /-->
-		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
-		<script src="//cdn.rawgit.com/jiggzson/nerdamer/master/nerdamer.core.js"></script>
-		<script src="//cdn.rawgit.com/jiggzson/nerdamer/master/Calculus.js"></script>
+		<script src="http://code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="http://cdn.rawgit.com/jiggzson/nerdamer/master/nerdamer.core.js"></script>
+		<script src="http://cdn.rawgit.com/jiggzson/nerdamer/master/Calculus.js"></script>
 		
 		<script src="js/mathquill-basic.js"></script>
 		<style>
@@ -24,8 +24,15 @@
 	</head>
 	<body>
 		<center>
-			<input type="text" class="input" autofocus/>
-			<div class="output">NO OUTPUT YET</div>
+			<h2>OPEN SOLVE</h2>
+            <!--<input type="text" class="input" autofocus/>-->
+            <p>
+                <span class="math-field" id="in">3x+5x</span>
+            </p>
+             <p>   
+			<span id="out">MathQuill Output</span>
+            <p>
+            <div class="output">NO OUTPUT YET</div>
 		</center>
 		<script>
 			// Variables
@@ -107,13 +114,39 @@
 				}
 			];
 			
-			$(".input").keyup(function(args)	{
+			
+                //converting input to mathquill
+                
+                 console.log($('#in'));
+                //render mathquill elements
+                $('.static-math').each(function(){ MathQuill.StaticMath(this); });
+                 $('.math-field').each(function(){ MathQuill.MathField(this); });
+        
+        
+                 $('#in').keyup(function()
+                 {
+                 // convert this span to MathQuill object
+                 var mathObj = MathQuill.MathField(this);
+                 // use MathQuill methods ( https://github.com/Khan/mathquill )
+                 $('#out').text(mathObj.latex());
+                });
+                
+                 
+                        
+                
+                // This looks like it controls output.
+                // Changed .input to .math-field.
+                // It still doesn't evaluate like I want.
+                
+                $(".math-field").keyup(function(args)	{
 				// Variables
 				var	input=	$(args.target);
 				var	output;
 				
+                
 				console.log(args);
-				for(var i= 0; i< knownFuncs.length; i++)
+                                                         
+                for(var i= 0; i< knownFuncs.length; i++)
 				{
 					if(args.which!= 8 && (args.which< 37 || args.which> 39) && hasKnownFunc(input, i))
 						easeParensOpen(input, input.val(), i);
