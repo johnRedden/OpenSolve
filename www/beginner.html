@@ -9,172 +9,68 @@
 		<script src="http://cdn.rawgit.com/jiggzson/nerdamer/master/nerdamer.core.js"></script>
 		<script src="http://cdn.rawgit.com/jiggzson/nerdamer/master/Calculus.js"></script>
 		
+		<script src="js/algebrite.js"></script>
 		<script src="js/mathquill-basic.js"></script>
-		<style>
-			#output{
-				
-			}
-			.output{
-				
-			}
-			.output.eval{
-				
-			}
-		</style>
+		<script src="js/solve.js"></script>
+		<script src="js/user-conveniences.js"></script>
 	</head>
 	<body>
 		<center>
 			<h2>OPEN SOLVE</h2>
-            <!--<input type="text" class="input" autofocus/>-->
+            <input type="text" class="math-field" autofocus/>
             <p>
-                <span class="math-field" id="in">3x+5x</span>
+                <!--<span class="math-field" id="in">3x+5x</span>/-->
             </p>
              <p>   
 			<span id="out">MathQuill Output</span>
             <p>
             <div class="output">NO OUTPUT YET</div>
 		</center>
+		<div class="found-vars">
+			<h3>Found Variables</h3>
+			<ul></ul>
+		</div>
 		<script>
-			// Variables
-			var	knownFuncs=	[
-				{
-					name:	"sin",
-					paste:	"sin(",
-					size:	3
-				},
-				{
-					name:	"cos",
-					paste:	"cos(",
-					size:	3
-				},
-				{
-					name:	"tan",
-					paste:	"tan(",
-					size:	3
-				},
-				{
-					name:	"csc",
-					paste:	"csc(",
-					size:	3
-				},
-				{
-					name:	"sec",
-					paste:	"sec(",
-					size:	3
-				},
-				{
-					name:	"cot",
-					paste:	"cot(",
-					size:	3
-				},
-				{
-					name:	"sin(h",
-					paste:	"sinh(",
-					size:	5
-				},
-				{
-					name:	"cos(h",
-					paste:	"cosh(",
-					size:	5
-				},
-				{
-					name:	"tan(h",
-					paste:	"tanh(",
-					size:	5
-				},
-				{
-					name:	"csc(h",
-					paste:	"csch(",
-					size:	5
-				},
-				{
-					name:	"sec(h",
-					paste:	"sech(",
-					size:	5
-				},
-				{
-					name:	"cot(h",
-					paste:	"coth(",
-					size:	5
-				},
-				{
-					name:	"ln",
-					paste:	"ln(",
-					size:	2
-				},
-				{
-					name:	"log",
-					paste:	"log(",
-					size:	3
-				},
-				{
-					name:	"derive",
-					paste:	"derive[",
-					size:	6
-				}
-			];
 			
+			//converting input to mathquill
+			// Right now lets just focus on the ascii, mainly because mobile does not like MQ
+			//render mathquill elements
+			//$('.static-math').each(function(){ MathQuill.StaticMath(this); });
+			//$('.math-field').each(function(){ MathQuill.MathField(this); });
+	
+	
+			/*$('#in').keyup(function()
+			{
+				// convert this span to MathQuill object
+				var mathObj = MathQuill.MathField(this);
+				// use MathQuill methods ( https://github.com/Khan/mathquill )
+				$('#out').text(mathObj.latex());
+			});*/
 			
-                //converting input to mathquill
-                
-                 console.log($('#in'));
-                //render mathquill elements
-                $('.static-math').each(function(){ MathQuill.StaticMath(this); });
-                 $('.math-field').each(function(){ MathQuill.MathField(this); });
-        
-        
-                 $('#in').keyup(function()
-                 {
-                 // convert this span to MathQuill object
-                 var mathObj = MathQuill.MathField(this);
-                 // use MathQuill methods ( https://github.com/Khan/mathquill )
-                 $('#out').text(mathObj.latex());
-                });
-                
-                 
-                        
-                
-                // This looks like it controls output.
-                // Changed .input to .math-field.
-                // It still doesn't evaluate like I want.
-                
-                $(".math-field").keyup(function(args)	{
+			 
+					
+			
+			// This looks like it controls output.
+			// Changed .input to .math-field.
+			// It still doesn't evaluate like I want.
+			
+			$(".math-field").keyup(function(args)	{
 				// Variables
 				var	input=	$(args.target);
 				var	output;
-				
-                
-				console.log(args);
-                                                         
-                for(var i= 0; i< knownFuncs.length; i++)
+														 
+				for(var i= 0; i< knownFunctions.length; i++)
 				{
-					if(args.which!= 8 && (args.which< 37 || args.which> 39) && hasKnownFunc(input, i))
+					if(args.which!= 8 && (args.which< 37 || args.which> 39) && hasKnownFunction(input, i))
 						easeParensOpen(input, input.val(), i);
 				}
 				
-				input=	input.val();
-				if(input.substr(0, 6)== "derive")
-					output=	nerdamer(input.substring(8, input.length-1));
-				else
-					output=	nerdamer(input);
-				$(".output").html(output.text());
-			});
-			
-			function hasKnownFunc(obj, index)
-			{
-				if(obj.val().substr(obj[0].selectionStart-knownFuncs[index].name.length, knownFuncs[index].name.length)== knownFuncs[index].name)
-					return true;
-			}
-			
-			function easeParensOpen(obj, val, index)
-			{
-				// Variables
-				var	ns=	obj[0].selectionStart+(knownFuncs[index].paste.length-knownFuncs[index].name.length);
+				input=	Algebrite.run(input.val());
 				
-				obj.val(val.substr(0, obj[0].selectionStart-knownFuncs[index].size)+knownFuncs[index].paste+val.substr(obj[0].selectionStart));
-				obj[0].selectionStart=	ns;
-				obj[0].selectionEnd=	obj[0].selectionStart;
-			}
+				findVariables(input);
+				output=	input;
+				$(".output").html(output);
+			});
 		</script>
 	</body>
 </html>
