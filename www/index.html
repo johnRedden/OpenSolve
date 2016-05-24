@@ -60,7 +60,8 @@
         <hr>
         <p> </p>
         <pre id="mainResult" class="text-center">Enter Ascii Math</pre>
-        
+        <p> </p>
+        <pre id="steps" class="text-center">Steps Maybe</pre>
         <p> </p>
         <a href="http://algebrite.org/reference.html" target="_blank">Function Ref.</a>
         
@@ -82,6 +83,8 @@
                 var inputTxt = $('#userInput').val().trim();
                 var output = mathWorks(inputTxt, cmd);
                 mathSimpleDisplay(output);
+                
+                if(cmd=='roots') $('#steps').html(mathSolve(inputTxt)) ;
             });
             
         });
@@ -102,6 +105,47 @@
         }
         function mathSimpleDisplay(arg){
             $('#mainResult').html(arg.command+'<br/>'+arg.result);
+        }
+        
+        function mathSolve(arg){
+            var degree = Algebrite.run('deg('+arg+')');
+            var lhs = arg.substr(0,arg.indexOf('='));
+            var rhs = arg.substr(arg.indexOf('=')+1, arg.length);
+            var lhsDeg = Algebrite.run('deg('+lhs+')');
+            var rhsDeg = Algebrite.run('deg('+rhs+')');
+            
+            var outHTML ='No steps detected.';
+            
+            // turn it around because for the dyslexia :/
+            if(lhsDeg==='0'){
+                var temp = lhs;
+                if(temp==='') temp='0';
+                lhs = rhs;
+                rhs = temp;
+                lhsDeg = '1';
+                rhsDeg = '0';
+            }
+            
+            if(lhsDeg==='1' && rhsDeg==='0'){
+                //special case ax+b=c
+                outHTML = lhs +' = '+rhs+'<br/>';
+
+                var a = Algebrite.run('coeff('+lhs+',x,1)'); //coeff of deg 1 term
+                var b = Algebrite.run('coeff('+lhs+',x,0)'); //coeff of deg 0 term
+                var c = rhs;
+                
+                var cminusb = Algebrite.run(c+'-('+b+')');
+                var oppb = Algebrite.run('-1('+b+')'); //coeff of deg 0 term
+
+                outHTML += 'Add '+oppb+' to both sides.<br/>';
+                outHTML += a+'x = '+ cminusb+'<br/>';
+                outHTML += 'Divide both sides by '+a+'<br/>';
+                outHTML += 'x = '+cminusb+'/'+a;
+                
+            }
+            
+            return outHTML;
+            
         }
         
 
