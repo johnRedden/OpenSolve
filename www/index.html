@@ -17,12 +17,16 @@
         @-ms-viewport { user-zoom: fixed ; min-zoom: 100% ; }           @viewport { user-zoom: fixed ; min-zoom: 100% ; }
     </style>
     
-    <link rel="stylesheet" href="css/mathquill.css"/>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="js/algebrite.js"></script>
     
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="js/mathquill-basic.js"></script>
+    <!-- Latest compiled and minified bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    
+    
+    
 
     <!-- Uncomment the following scripts if you convert your "Standard HTML5" project into a "Cordova" project. -->
     <!-- <script src="cordova.js"></script> -->          <!-- phantom library, needed for Cordova api calls, added during build -->
@@ -32,63 +36,75 @@
 
 <body>
 
-    <h2>Open Computer Algebra System</h2>
-    
-    <p>
-        Static Mathquill: 
-        <span class="static-math">ax^2+bx+c=0</span>
-    </p>
-    <p>
-        Dynamic Mathquill: 
-        <span class="math-field" id="in">3x+5x</span>
-    </p>
-        <p>
-        Mathquill output LaTex: 
-        <span id="out"></span>
-    </p>
-    <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-default" id="back">
-            <span class="glyphicon glyphicon-fast-backward" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="btn btn-default" id="clr">
-            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-        </button>
-        <button type="button" class="btn btn-default" id="forward">
-            <span class="glyphicon glyphicon-fast-forward" aria-hidden="true"></span>
-        </button>
+    <div class="container">
+        <h2>Open Solve</h2>
+        <hr>
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="input-group">
+              <input id="userInput" type="text" class="form-control" aria-label="..." autofocus>
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li><a href="#evaluate" command="eval">Evaluate</a></li>
+                  <li><a href="#simplify" command="simplify">Simplify</a></li>
+                  <li><a href="#solve" command="roots">Solve</a></li>
+                  <li><a href="#derivative" command="d">Derivative</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#">More Commands Soon!</a></li>
+                </ul>
+              </div><!-- /btn-group -->
+            </div><!-- /input-group -->
+          </div><!-- /.col-lg-6 -->
+        </div><!-- /.row -->
+        <hr>
+        <p> </p>
+        <pre id="mainResult" class="text-center">Enter Ascii Math</pre>
+        
+        <p> </p>
+        <a href="http://algebrite.org/reference.html" target="_blank">Function Ref.</a>
+        
     </div>
+   
     
     <script>
-        console.log($('#in'));
-        //render mathquill elements
-        $('.static-math').each(function(){ MathQuill.StaticMath(this); });
-        $('.math-field').each(function(){ MathQuill.MathField(this); });
         
-        
-        $('#in').keyup(function(){
-            // convert this span to MathQuill object
-            var mathObj = MathQuill.MathField(this);
-            // use MathQuill methods ( https://github.com/Khan/mathquill )
-            $('#out').text(mathObj.latex());
+        $('document').ready(function(){
+            
+            $('#userInput').on('keyup',function(e){
+                var inputTxt = $(this).val().trim();
+                var output = mathWorks(inputTxt, '');
+                mathSimpleDisplay(output);
+            });
+            
+            $('.dropdown-menu a').click(function(){
+                var cmd = $(this).attr('command');
+                var inputTxt = $('#userInput').val().trim();
+                var output = mathWorks(inputTxt, cmd);
+                mathSimpleDisplay(output);
+            });
+            
         });
         
-        // Buttons for Mobile
-        $('#forward').click(function(){
-            var contents = $('#in');
-            var mathObj = MathQuill.MathField(contents[0]);
-            mathObj.moveToRightEnd().focus();
-        });
-        $('#back').click(function(){
-            var contents = $('#in');
-            var mathObj = MathQuill.MathField(contents[0]);
-            mathObj.moveToLeftEnd().focus();
-        });
-        $('#clr').click(function(){
-            var contents = $('#in');
-            var mathObj = MathQuill.MathField(contents[0]);
-            mathObj.select();
-            mathObj.write('').focus();
-        });
+        // utility functions
+        function mathWorks(asciiMath, command){
+            var resultTxt = "";
+            var commandStr = command+'('+asciiMath+')';
+            if(asciiMath==="") 
+                    resultTxt="Enter Ascii Math";
+            else
+                    resultTxt = '= '+Algebrite.run(commandStr);
+            
+            return {
+                command:commandStr,
+                result: resultTxt
+            }
+        }
+        function mathSimpleDisplay(arg){
+            $('#mainResult').html(arg.command+'<br/>'+arg.result);
+        }
+        
+
     </script>
 
 </body>
