@@ -108,44 +108,62 @@
         }
         
         function mathSolve(arg){
-            var degree = Algebrite.run('deg('+arg+')');
+            
             var lhs = arg.substr(0,arg.indexOf('='));
             var rhs = arg.substr(arg.indexOf('=')+1, arg.length);
+            if(lhs===''){
+                lhs=rhs;
+                rhs='0';
+            }
+            
             var lhsDeg = Algebrite.run('deg('+lhs+')');
             var rhsDeg = Algebrite.run('deg('+rhs+')');
             
+            console.log(lhsDeg +' -- '+rhsDeg);
+            
             var outHTML ='No steps detected.';
             
-            // turn it around because for the dyslexia :/
-            if(lhsDeg==='0'){
-                var temp = lhs;
-                if(temp==='') temp='0';
-                lhs = rhs;
-                rhs = temp;
-                lhsDeg = '1';
-                rhsDeg = '0';
-            }
             
-            if(lhsDeg==='1' && rhsDeg==='0'){
-                //special case ax+b=c
-                outHTML = lhs +' = '+rhs+'<br/>';
-
-                var a = Algebrite.run('coeff('+lhs+',x,1)'); //coeff of deg 1 term
-                var b = Algebrite.run('coeff('+lhs+',x,0)'); //coeff of deg 0 term
-                var c = rhs;
-                
-                var cminusb = Algebrite.run(c+'-('+b+')');
-                var oppb = Algebrite.run('-1('+b+')'); //coeff of deg 0 term
-
-                outHTML += 'Add '+oppb+' to both sides.<br/>';
-                outHTML += a+'x = '+ cminusb+'<br/>';
-                outHTML += 'Divide both sides by '+a+'<br/>';
-                outHTML += 'x = '+cminusb+'/'+a;
-                
+            if((lhsDeg==='1'||lhsDeg==='0') && (rhsDeg==='0'||rhsDeg==='1')){
+                outHTML = mathSolveGeneralLinear(lhs,rhs);
             }
             
             return outHTML;
             
+        }
+        function mathSolveGeneralLinear(lhs, rhs){
+            var outHTML = 'Solving Linear Equations <br/>';
+            
+            //special case ax+b=c
+            outHTML += lhs +' = '+rhs+'<br/>';
+            
+            outHTML += 'Add same-side like terms.<br/>';
+            simplifiedlhs = Algebrite.run(lhs);
+            simplifiedrhs = Algebrite.run(rhs);
+            outHTML += simplifiedlhs +' = '+simplifiedrhs+'<br/>';
+            
+            var lt = Algebrite.run('coeff('+simplifiedrhs+',x,1)'); //coeff of deg 1 term
+            var opplt = Algebrite.run('-1('+lt+')'); //opposite
+            outHTML += 'Combine opposite-side like terms. Add '+opplt+'x to both sides<br/>';
+            simplifiedlhs = Algebrite.run(simplifiedlhs+'+('+opplt+'x)');
+            simplifiedrhs = Algebrite.run(simplifiedrhs+'+('+opplt+'x)');
+            outHTML += simplifiedlhs +' = '+simplifiedrhs+'<br/>';
+            
+
+            var a = Algebrite.run('coeff('+simplifiedlhs+',x,1)'); //coeff of deg 1 term
+            var b = Algebrite.run('coeff('+simplifiedrhs+',x,0)'); //coeff of deg 0 term
+            var c = simplifiedrhs;
+
+            var cminusb = Algebrite.run(c+'-('+b+')');
+            var oppb = Algebrite.run('-1('+b+')'); //coeff of deg 0 term
+
+            outHTML += 'Add '+oppb+' to both sides.<br/>';
+            outHTML += a+'x = '+ cminusb+'<br/>';
+            outHTML += 'Divide both sides by '+a+'<br/>';
+            outHTML += 'x = '+cminusb+'/'+a;
+            
+            return outHTML;
+
         }
         
 
