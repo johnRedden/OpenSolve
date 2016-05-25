@@ -1,8 +1,8 @@
 // send linear left hand side and right hand side... catches all scenarios
 // I think we need to send this the variable too eqVar (one variable only)
 function mathSolveGeneralLinear(lhs, rhs, eqVar){
-    var outHTML = 'Solving Linear Equations <br/>';
-    outHTML += lhs +' = '+rhs+'<br/><br/>';
+    var outHTML = ''; // 'Solving Linear Equations <br/>'
+    //outHTML += lhs +' = '+rhs+'<br/><br/>';
 
     //Quote the original ascii input (quote is not what I expected?)
     var origlhs = Algebrite.run('quote('+lhs+')');
@@ -64,8 +64,8 @@ function mathSolveGeneralLinear(lhs, rhs, eqVar){
 
 // solve quadratic equations (one variable only)
 function mathSolveGeneralQuadratic(lhs,rhs,eqVar){
-    var outHTML = 'Solving Quadratic Equations <br/>';
-    outHTML += lhs +' = '+rhs+'<br/><br/>';
+    var outHTML = ''; // 'Solving Quadratic Equations <br/>
+    //outHTML += lhs +' = '+rhs+'<br/><br/>';
 
     //Quote the original ascii input (quote is not what I expected?)
     var origlhs = Algebrite.run('quote('+lhs+')');
@@ -104,8 +104,24 @@ function mathSolveGeneralQuadratic(lhs,rhs,eqVar){
         //a whole stand-alone function will allow for two methods
     }
     //Oh goodness we need to get the linears in each parens
-    //and call linear method above.
+    //and call linear method above.  I need only the inside stuff here??
+    var regExp = /\(([^()]+)\)/g;
+    var matches = origlhs.match(regExp);
+    if(matches){
+        var linear1 = matches[0].substr(1,matches[0].length-2); //this is nonsense!
+        var linear2 = matches[1].substr(1,matches[1].length-2);
+
+        var temp1HTML = mathSolveGeneralLinear(linear1,'0','x');
+        var temp2HTML = mathSolveGeneralLinear(linear2,'0','x');
+        outHTML += '<table align="center"><tr><td style="padding:10px" valign="top">'+temp1HTML+'</td><td style="padding:10px" valign="top">'+temp2HTML+'</td></tr></table>'
+        
+    }else{
+        outHTML="something is up.";
+    }
+
     
+
+
     
     return outHTML;
     
