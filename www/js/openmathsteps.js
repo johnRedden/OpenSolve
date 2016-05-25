@@ -85,46 +85,52 @@ function mathSolveGeneralQuadratic(lhs,rhs,eqVar){
     newlhs = Algebrite.run(origlhs+'-('+origrhs+')');
     newrhs = Algebrite.run(origrhs+'-('+origrhs+')');
     if(origlhs!=newlhs || origrhs!=newrhs){
+        
+        //at this point check if still quadratic? rhs should be zero.
+        var checkDeg = Algebrite.run('deg('+newlhs+',x)');
+        if(checkDeg<2) {
+            outHTML+=mathSolveGeneralLinear(newlhs,'0','x');
+            return outHTML;
+        }
+        
         outHTML += newlhs +' = '+newrhs+'<br/>';
         origlhs=newlhs;
         origrhs=newrhs;
     }
-    //at this point check if still quadratic?
-    //check if factorable
 
+    //check if factorable
     //outHTML += 'Factor.<br/>';
     newlhs = Algebrite.run('factor('+origlhs+')');
     if(origlhs!=newlhs){
+         //tag factorable
         outHTML += newlhs +' = '+newrhs+'<br/>';
         origlhs=newlhs;
         origrhs=newrhs;
-        //tag factorable
-    }else{
-        //break off to quadratic formula function
-        //a whole stand-alone function will allow for two methods
-    }
-    //Oh goodness we need to get the linears in each parens
-    //and call linear method above.  I need only the inside stuff here??
-    var regExp = /\(([^()]+)\)/g;
-    var matches = origlhs.match(regExp);
-    if(matches){
-        var linear1 = matches[0].substr(1,matches[0].length-2); //this is nonsense!
-        var linear2 = matches[1].substr(1,matches[1].length-2);
+       
+        //to get the linears inside the parens... Paul can do better here.
+        var matches = origlhs.match(/\(([^()]+)\)/g);  
+        if(matches.length===2){
+            var linear1 = matches[0].substr(1,matches[0].length-2); //this is nonsense!
+            var linear2 = matches[1].substr(1,matches[1].length-2);
+        }else{
+            var tempindex = origlhs.search(/\(/);
+            var linear1 = origlhs.substr(0,tempindex);
+            var linear2 = matches[0].substr(1,matches[0].length-2);
+            if(linear1==='') linear1=linear2;
+        }
 
         var temp1HTML = mathSolveGeneralLinear(linear1,'0','x');
         var temp2HTML = mathSolveGeneralLinear(linear2,'0','x');
-        outHTML += '<table align="center"><tr><td style="padding:10px" valign="top">'+temp1HTML+'</td><td style="padding:10px" valign="top">'+temp2HTML+'</td></tr></table>'
+        outHTML += '<table align="center"><tr><td style="padding:10px" valign="top">'+temp1HTML+'</td><td style="padding:10px" valign="top">'+temp2HTML+'</td></tr></table>'       
         
     }else{
-        outHTML="something is up.";
+        //a whole stand-alone function will allow for two methods
+        outHTML+="Not factorable over the integers.";
+        //break off to quadratic formula function
+        // or extracting roots
     }
-
-    
-
-
     
     return outHTML;
-    
 }
 function mathSolveGeneralQuadraticFormula(lhs,rhs,eqVar){
     //quad formula work here
