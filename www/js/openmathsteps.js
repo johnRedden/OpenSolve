@@ -125,13 +125,30 @@ function mathSolveGeneralQuadratic(lhs,rhs,eqVar){
         
     }else{
         //a whole stand-alone function will allow for two methods
-        outHTML+="Not factorable over the integers.";
+        outHTML+="Not factorable over the integers.<br/>";
         //break off to quadratic formula function
+        outHTML+=mathSolveGeneralQuadraticFormula(origlhs,'0','x');
         // or extracting roots
     }
     
     return outHTML;
 }
 function mathSolveGeneralQuadraticFormula(lhs,rhs,eqVar){
-    //quad formula work here
+    var outHTML = '';
+    //asuming standard form
+    var a = Algebrite.run('coeff('+lhs+','+eqVar+',2)');
+    var b = Algebrite.run('coeff('+lhs+','+eqVar+',1)');
+    var c = Algebrite.run('coeff('+lhs+','+eqVar+',0)');
+    
+    outHTML += 'a = '+a+', b = '+b+', c = '+c+'<br/>';
+    outHTML += eqVar+' = ( -b ± sqrt(b^2-4ac) ) / (2a)<br/>';
+    outHTML += eqVar+' = ( -('+b+') ± sqrt(('+b+')^2-4('+a+')('+c+')) ) / (2('+a+'))<br/>';
+    var descrim = Algebrite.run('('+b+')^2-4('+a+')('+c+')');
+    var denom = Algebrite.run('(2('+a+'))');
+    var oppb = Algebrite.run('-1*('+b+')');
+    outHTML += eqVar+' = ( '+oppb+' ± sqrt('+descrim+') ) / '+denom+'<br/>';
+    //now need to reduce somehow.
+    
+    
+    return outHTML;
 }
