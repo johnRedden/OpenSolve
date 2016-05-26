@@ -25,6 +25,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" async
+        src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
     
     
     
@@ -60,11 +64,14 @@
         </div><!-- /.row -->
         <hr>
         <p> </p>
-        <pre id="mainResult" class="text-center">Enter Ascii Math</pre>
+        <pre id="mainResult" class="text-center">Algebrite onKeyup Ascii Math</pre>
+        <p> </p>
+        <div id="niceResult" class="well text-center"  class="text-center">Enter for nice display.</div>
         <p> </p>
         <pre id="steps" class="text-center">Steps Maybe</pre>
         <p> </p>
-        <a href="http://algebrite.org/reference.html" target="_blank">Function Ref.</a>
+        <a href="http://algebrite.org/reference.html" target="_blank">Algebrite Function Ref.</a><br/>
+        <a href="http://asciimath.org/" target="_blank">Ascii math Ref.</a>
         
     </div>
    
@@ -78,6 +85,8 @@
                 var inputTxt = $(this).val().trim();
                 var output = mathWorks(inputTxt, '');
                 mathSimpleDisplay(output);
+                if(e.keyCode == 13)
+                    mathJaxDisplay(output);
             });
             
             $('.dropdown-menu a').click(function(){
@@ -85,6 +94,7 @@
                 var inputTxt = $('#userInput').val().trim();
                 var output = mathWorks(inputTxt, cmd);
                 mathSimpleDisplay(output);
+                
                 
                 //steps for solving detected here
                 if(cmd=='roots') $('#steps').html(mathSolve(inputTxt)) ;
@@ -102,12 +112,19 @@
                     resultTxt = '= '+Algebrite.run(commandStr);
             
             return {
+                rawInput: asciiMath,
                 command:commandStr,
                 result: resultTxt
             }
         }
+        
         function mathSimpleDisplay(arg){
             $('#mainResult').html(arg.command+'<br/>'+arg.result);
+        }
+        function mathJaxDisplay(arg){
+            //Mathjax renders ascii math between back ticks
+            $('#niceResult').html('`'+arg.rawInput+' '+arg.result+'`<br/>');
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub,"niceResult"]);
         }
         
         function mathSolve(arg){
