@@ -49,14 +49,17 @@
             <div class="input-group">
               <input id="userInput" type="text" class="form-control" aria-label="..." autofocus>
               <div class="input-group-btn">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
+                <button type="button" id="actionbutton" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right">
+				  <li><a href="#" command="">Normal</a></li>
                   <li><a href="#evaluate" command="eval">Evaluate</a></li>
+                  <!--  <li><a href="#preciseevaluate" command="peval">Precise Evaluation</a></li> <!-- Does not work fully :/ /-->
                   <li><a href="#simplify" command="simplify">Simplify</a></li>
                   <li><a href="#solve" command="roots">Solve</a></li>
                   <li><a href="#derivative" command="d">Derivative</a></li>
                   <li role="separator" class="divider"></li>
-                  <li><a href="#">More Commands Soon!</a></li>
+				  <li><a href="#" command="graph">Graph</a></li>
+                  <li><a href="#" command="notreal">More Commands Soon!</a></li>
                 </ul>
               </div><!-- /btn-group -->
             </div><!-- /input-group -->
@@ -77,14 +80,62 @@
    
     
     <script>
+		
+		// Gets the command from the url's hash
+		function getCommandFromHash()	{
+			if(!location.hash)
+				return "";
+			
+			switch(location.hash.substring(1))	{
+				case "evaluate":	return "eval";
+				case "preciseevaluate":	return "peval";
+				case "simplify":	return "simplify";
+				case "solve":	return "roots";
+				case "derivative":	return "d";
+				default:	return "";
+			}
+		}
+		
+		function getDropdownText(hash)	{
+			if($(".dropdown-menu a[href='"+hash+"']")[0]== null)
+				return "Action";
+			
+			return $(".dropdown-menu a[href='"+hash+"']").text();
+		}
+		
+		// Does the thing
+		function doCommand(inputTxt, cmd)	{
+			switch(cmd)
+			{
+				case "graph":
+					window.open("http://www.opengraphingcalculator.com?"+Algebrite.run(inputTxt), "_blank");
+					cmd=	"";
+					break;
+				case "notreal":
+					return;
+				case "peval":
+					try{
+						mathSimpleDisplay(mathWorksPercise(inputTxt, changeToJsMath(inputTxt)));
+					}catch(e){}
+					return;
+			}
+			
+			var output = mathWorks(inputTxt, cmd);
+			mathSimpleDisplay(output);
+			
+			
+			//steps for solving detected here
+			if(cmd=='roots') $('#steps').html(mathSolve(inputTxt)) ;
+		}
         
         $('document').ready(function(){
             //Your awesome javascript goes here.
             
             $('#userInput').on('keyup',function(e){
                 var inputTxt = $(this).val().trim();
-                var output = mathWorks(inputTxt, '');
-                mathSimpleDisplay(output);
+				
+				doCommand(inputTxt, getCommandFromHash());
+				
                 if(e.keyCode == 13)
                     mathJaxDisplay(output);
             });
@@ -92,20 +143,34 @@
             $('.dropdown-menu a').click(function(){
                 var cmd = $(this).attr('command');
                 var inputTxt = $('#userInput').val().trim();
-                var output = mathWorks(inputTxt, cmd);
-                mathSimpleDisplay(output);
-                
-                
-                //steps for solving detected here
-                if(cmd=='roots') $('#steps').html(mathSolve(inputTxt)) ;
+				
+				doCommand(inputTxt, cmd);
+				
+				switch(cmd)	{
+					default:	$("#actionbutton").html($(this).text()+" <span class='caret'></span>");	break;
+					case "":
+					case "graph":
+					case "notreal":
+						$("#actionbutton").html("Action <span class='caret'></span>");
+						break;
+				}
             });
             
+			if(location.hash && location.hash.length> 1)
+			{
+				$("#actionbutton").html(getDropdownText(location.hash)+" <span class='caret'></span>");
+			}
         });
+		
+		// Changes the input text to some js math for better evaluation
+		function changeToJsMath(txt)	{
+			return Algebrite.run(txt).replace(/ln/g, "log").replace(/(sin|cos|tan|cot|csc|sec|log|abs)/g, "Math.$1");
+		}
         
         // utility functions
         function mathWorks(asciiMath, command){
             var resultTxt = "";
-            var commandStr = command+'('+asciiMath+')';
+            var commandStr = command+'( '+asciiMath+' )';
             if(asciiMath==="") 
                     resultTxt="Enter Ascii Math";
             else
@@ -117,6 +182,15 @@
                 result: resultTxt
             }
         }
+		
+		// Same as above, but for things like sin(2) and tan(17)
+		function mathWorksPercise(asciiMath, jsMath)	{
+			return {
+				rawInput:	asciiMath,
+				command: "eval( "+asciiMath+" )",
+				result:	"= "+eval(jsMath)
+			};
+		}
         
         function mathSimpleDisplay(arg){
             $('#mainResult').html(arg.command+'<br/>'+arg.result);

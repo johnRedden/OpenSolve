@@ -44,8 +44,8 @@ function mathSolveGeneralLinear(lhs, rhs, eqVar){
         var leadCoeff = Algebrite.run('coeff('+origlhs+',x,1)');
         //outHTML += 'Divide both sides by '+leadCoeff+'.<br/>';               
 
-        newlhs = Algebrite.run(origlhs+'/('+leadCoeff+')');
-        newrhs = Algebrite.run(origrhs+'/('+leadCoeff+')');
+        newlhs = Algebrite.run('('+origlhs+')'+'/('+leadCoeff+')');
+        newrhs = Algebrite.run('('+origrhs+')'+'/('+leadCoeff+')');
         if(origlhs!=newlhs || origrhs!=newrhs){
             outHTML += newlhs +' = '+newrhs+'<br/>';
             origlhs=newlhs;
