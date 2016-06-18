@@ -57,6 +57,12 @@
                   <li><a href="#simplify" command="simplify">Simplify</a></li>
                   <li><a href="#solve" command="roots">Solve</a></li>
                   <li><a href="#derivative" command="d">Derivative</a></li>
+				  <li><a href="#integral" command="integral">Integral</a></li>
+                  <li role="separator" class="divider"></li>
+				  <li>
+					<a href="#gcd" command="gcd">Greatest Common Denominator</a>
+					<a href="#lcm" command="lcm">Least Common Multiple</a>
+				  </li>
                   <li role="separator" class="divider"></li>
 				  <li><a href="#" command="graph">Graph</a></li>
                   <li><a href="#" command="notreal">More Commands Soon!</a></li>
@@ -88,10 +94,12 @@
 			
 			switch(location.hash.substring(1))	{
 				case "evaluate":	return "eval";
-				case "preciseevaluate":	return "peval";
 				case "simplify":	return "simplify";
 				case "solve":	return "roots";
 				case "derivative":	return "d";
+				//case "integral":	return "integral";
+				case "gcd":	return "gcd";
+				case "lcm":	return "lcm";
 				default:	return "";
 			}
 		}
@@ -178,10 +186,20 @@
             
             return {
                 rawInput: asciiMath,
-                command:commandStr,
+                command: makeReadable(commandStr),
                 result: resultTxt
             }
         }
+		
+		function makeReadable(str)	{
+			return str.replace(/roots/g, "Solve")
+				.replace(/gcd/g, "GCD")
+				.replace(/lcm/g, "LCM")
+				.replace(/d\(/g, "Derive(")
+				.replace(/eval/g, "Evaluate")
+				.replace(/simplify/g, "Simplify")
+				.replace(/integral/g, "Integral");
+		}
 		
 		// Same as above, but for things like sin(2) and tan(17)
 		function mathWorksPercise(asciiMath, jsMath)	{
