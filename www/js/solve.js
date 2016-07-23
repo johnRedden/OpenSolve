@@ -100,4 +100,162 @@ function splitStringNoDuplicates(str)
 	return vars;
 }
 
+function calculateAccurately(inputStr)
+{
+	// Variables
+	var	pmArr=	splitIntoPlusMinus(Algebrite.run(inputStr));
+	var	total=	0;
+	var	left=	"";
+	var	right=	"";
+	var	type=	"";
+	
+	try	{
+		for(var i= 0; i< pmArr.length; i++)
+		{
+			if(left== "")
+			{
+				left=	splitMultAndSolve(pmArr[i]);
+			}
+			else if(type== "")
+			{
+				type=	pmArr[i];
+				if(type== "add")
+					type=	" + ";
+				else
+					type=	" - ";
+			}
+			else
+			{
+				right=	splitMultAndSolve(pmArr[i]);
+				total=	Algebrite(total+"+"+left+type+right);
+				left=	"";
+				type=	"";
+				right=	"";
+			}
+		}
+		if(left!= "")
+			total=	Algebrite.run(total+"+"+left);
+	}catch(e)	{	console.log(e);	}
+	
+	return {
+		rawInput:	inputStr,
+		command: "eval( "+inputStr+" )",
+		result:	"= "+Algebrite.run(total)
+	};
+}
+
+function replaceKnownFuncsForMult(str)
+{
+	// Variables
+	var	nstr=	str.replace(/sin/g, " sin")
+		.replace(/cos/g, " cos")
+		.replace(/tan/g, " tan")
+		.replace(/csc/g, " csc")
+		.replace(/sec/g, " sec")
+		.replace(/cot/g, " cot")
+		.replace(/ln/g, " ln")
+		.replace(/log/g, " log")
+		.replace(/sinh/g, " sinh")
+		.replace(/cosh/g, " cosh")
+		.replace(/tanh/g, " tanh")
+		.replace(/csch/g, " csch")
+		.replace(/sech/g, " sech")
+		.replace(/coth/g, " coth");
+	
+	return	{
+		str:	nstr,
+		changed:	(str.trim()!= nstr.trim())
+	};
+}
+
+function splitMultAndSolve(miniEQ, bObj)
+{
+	// Variables
+	var	splits=	miniEQ.split(" ");
+	var	coef=	1;
+	var	temp=	"";
+	var	anyOtherVars=	"";
+	
+	try	{
+		for(var i= 0; i< splits.length; i++)
+		{
+			temp=	replaceKnownFuncsForMult(splits[i]);
+			if(temp.changed)
+			{
+				temp=	splitMultAndSolve(temp.str, true);
+				coef*=	temp.coef;
+				anyOtherVars+=	" "+temp.vars;
+				continue;
+			}
+			
+			if(!isNaN(splits[i]))
+				coef*=	splits[i];
+			else
+			{
+				try	{
+					temp=	eval("with(Math) "+splits[i]);
+					if(!isNaN(temp)) // If its a number
+						coef*=	temp;
+					else
+					{
+						if(anyOtherVars== "")
+							anyOtherVars=	temp;
+						else
+							anyOtherVars+=	" "+temp;
+					}
+				} catch(e)	{	anyOtherVars+=	splits[i];	}
+			}
+		}
+	} catch(e) { console.log(e);	}
+	
+	if(bObj)
+	{
+		return	{
+			coef:	coef,
+			vars:	anyOtherVars
+		};
+	}
+	if(anyOtherVars== "")
+		return coef;
+	else
+		return coef+" "+anyOtherVars;
+}
+
+function splitIntoPlusMinus(inputStr)
+{
+	// Variables
+	var	algArr=	[];
+	var	d=	0;
+	var	plusi=	0;
+	var	minusi=	0;
+	var	closest=	0;
+	
+	// Extracts the eq into plus-minus arrays 
+	while(true)
+	{
+		plusi=	inputStr.indexOf(" + ", closest);
+		minusi=	inputStr.indexOf(" - ", closest);
+		
+		if(plusi== -1 && minusi== -1)
+			break;
+		else if((minusi> plusi && plusi!= -1) || (plusi!= -1 && minusi== -1))
+		{
+			algArr[d++]=	inputStr.substring(0, plusi);
+			algArr[d++]=	"add";
+			inputStr=	inputStr.substring(plusi);
+			closest=	plusi;
+		}
+		else if((plusi> minusi && minusi!= -1) || (minusi!= -1 && plusi== -1))
+		{
+			algArr[d++]=	inputStr.substring(0, minusi);
+			algArr[d++]=	"minus";
+			inputStr=	inputStr.substring(minusi);
+			closest=	minusi;
+		}
+	}
+	algArr[d]=	inputStr;
+	
+	return algArr;
+}
+
 // End of File

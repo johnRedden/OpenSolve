@@ -20,6 +20,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="js/algebrite.js"></script>
     <script src="js/openmathsteps.js"></script>
+    <script src="js/solve.js"></script>
     
     <!-- Latest compiled and minified bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -53,7 +54,7 @@
                 <ul class="dropdown-menu dropdown-menu-right">
 				  <li><a href="#" command="">Normal</a></li>
                   <li><a href="#evaluate" command="eval">Evaluate</a></li>
-                  <!--  <li><a href="#preciseevaluate" command="peval">Precise Evaluation</a></li> <!-- Does not work fully :/ /-->
+                  <li><a href="#preciseevaluate" command="peval">Precise Evaluation</a></li> <!-- Does not work fully :/ /-->
                   <li><a href="#simplify" command="simplify">Simplify</a></li>
                   <li><a href="#solve" command="roots">Solve</a></li>
                   <li><a href="#derivative" command="d">Derivative</a></li>
@@ -94,6 +95,7 @@
 			
 			switch(location.hash.substring(1))	{
 				case "evaluate":	return "eval";
+				case "preciseevaluate":	return "peval";
 				case "simplify":	return "simplify";
 				case "solve":	return "roots";
 				case "derivative":	return "d";
@@ -123,8 +125,8 @@
 					return;
 				case "peval":
 					try{
-						mathSimpleDisplay(mathWorksPercise(inputTxt, changeToJsMath(inputTxt)));
-					}catch(e){}
+						mathSimpleDisplay(calculateAccurately(inputTxt));
+					}catch(e){ console.log(e); }
 					return;
 			}
 			
@@ -140,9 +142,9 @@
             //Your awesome javascript goes here.
             
             $('#userInput').on('keyup',function(e){
-                var inputTxt = $(this).val().trim();
+                /*var inputTxt = $(this).val().trim();
 				
-				doCommand(inputTxt, getCommandFromHash());
+				doCommand(inputTxt, getCommandFromHash());*/
 				
                 if(e.keyCode == 13)
                     mathJaxDisplay(output);
@@ -197,6 +199,7 @@
 				.replace(/lcm/g, "LCM")
 				.replace(/d\(/g, "Derive(")
 				.replace(/eval/g, "Evaluate")
+				.replace(/peval/g, "Evaluate")
 				.replace(/simplify/g, "Simplify")
 				.replace(/integral/g, "Integral");
 		}
@@ -211,6 +214,7 @@
 		}
         
         function mathSimpleDisplay(arg){
+			console.log(arg);
             $('#mainResult').html(arg.command+'<br/>'+arg.result);
         }
         function mathJaxDisplay(arg){
