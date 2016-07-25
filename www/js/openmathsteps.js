@@ -211,14 +211,15 @@ function doStepForDerivative(eqObj, outHTML, rule)
 			fx=	fx[0];
 			
 			return outHTML+eqObj.coef+"*("+(
-				fx+" d/dx( "+gx+" ) + d/dx( "+fx+" ) "+gx
+				fx+" ("+Algebrite.run("d("+gx+")")+") + "+
+				"("+Algebrite.run("d("+fx+")")+") "+gx
 			)+")";
 			/*return outHTML+Algebrite.run(
 				eqObj.coef+"*("+
 					fx+"*d("+gx+")+d("+fx+")*"+gx
 			);*/
 		case "d": // Just straight up hiddly hoodly
-			return outHTML+(eqObj.coef*(Algebrite.run("d("+eqObj.vars+")")));
+			return outHTML+(eqObj.coef+"*("+Algebrite.run("d("+eqObj.vars+")")+")");
 	}
 	
 	return outHTML;
