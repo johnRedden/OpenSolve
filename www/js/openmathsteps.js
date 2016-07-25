@@ -198,13 +198,16 @@ function doStepForDerivative(eqObj, outHTML, rule)
 	switch(rule)
 	{
 		case "quot_chainrule": // Grab first and slap it with the second one, then figure it out with a third?
-			fx=	eqObj.vars.split(" ");
+			fx=	eqObj.vars.split(" / ");
 			gx=	fx[1];
 			fx=	fx[0];
 			
-			return outHTML+eqObj.coef;//*(
-				//
-			//);
+			console.log(rule);
+			
+			return outHTML+eqObj.coef+"*("+(
+				fx+" ("+Algebrite.run("d("+gx+")")+") - "+
+				"("+Algebrite.run("d("+fx+")")+") "+gx
+			)+")/(("+gx+")^2)";
 		case "mult_chainrule": // Second verse same as the first
 			fx=	eqObj.vars.split(" ");
 			gx=	fx[1];
