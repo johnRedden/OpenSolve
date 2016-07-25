@@ -19,8 +19,8 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="js/algebrite.js"></script>
-    <script src="js/openmathsteps.js"></script>
     <script src="js/solve.js"></script>
+    <script src="js/openmathsteps.js"></script>
     
     <!-- Latest compiled and minified bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -135,7 +135,7 @@
 			
 			
 			//steps for solving detected here
-			if(cmd=='roots') $('#steps').html(mathSolve(inputTxt)) ;
+			if(cmd=='roots' || cmd== "d") $('#steps').html(mathSolve(inputTxt)) ;
 		}
         
         $('document').ready(function(){
@@ -214,7 +214,6 @@
 		}
         
         function mathSimpleDisplay(arg){
-			console.log(arg);
             $('#mainResult').html(arg.command+'<br/>'+arg.result);
         }
         function mathJaxDisplay(arg){
@@ -225,6 +224,12 @@
         
         function mathSolve(arg){
             
+			if(getCommandFromHash()== "d")
+			{
+				console.log(arg);
+				return startsStepsForDerivative(arg);
+			}
+			
             var lhs = arg.substr(0,arg.indexOf('='));
             var rhs = arg.substr(arg.indexOf('=')+1, arg.length);
             if(lhs===''){

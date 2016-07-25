@@ -152,3 +152,84 @@ function mathSolveGeneralQuadraticFormula(lhs,rhs,eqVar){
     
     return outHTML;
 }
+
+function startsStepsForDerivative(inputStr)
+{
+	// Variables
+	var	outHTML=	inputStr+"<br/>";
+	var	pmArr=	splitIntoPlusMinus(Algebrite.run(inputStr));
+	var	a=	"";
+	
+	for(var i= 0; i< pmArr.length; i++)
+	{
+		a=	doStepForDerivative(
+			splitMultAndSolve(pmArr[i], true),
+			a,
+			findOutDerivativeRule(splitMultAndSolve(pmArr[i], true))
+		);
+		i++;
+		if(i>= pmArr.length)
+			break;
+		if(pmArr[i]== "add")
+			a+=	" + ";
+		else
+			a+=	" - ";
+		i++;
+		a=	doStepForDerivative(
+			splitMultAndSolve(pmArr[i], true),
+			a,
+			findOutDerivativeRule(splitMultAndSolve(pmArr[i], true))
+		);
+	}
+	outHTML+=	a+"<br/>";
+	a=	a.replace(/d\/dx/g, "d");
+	a=	Algebrite.run(a);
+	outHTML+=	a;
+	
+	return outHTML;
+}
+
+function doStepForDerivative(eqObj, outHTML, rule)
+{
+	// Variables
+	var	fx;
+	var	gx;
+	
+	switch(rule)
+	{
+		case "quot_chainrule": // Grab first and slap it with the second one, then figure it out with a third?
+			fx=	eqObj.vars.split(" ");
+			gx=	fx[1];
+			fx=	fx[0];
+			
+			return outHTML+eqObj.coef;//*(
+				//
+			//);
+		case "mult_chainrule": // Second verse same as the first
+			fx=	eqObj.vars.split(" ");
+			gx=	fx[1];
+			fx=	fx[0];
+			
+			return outHTML+eqObj.coef+"*("+(
+				fx+" d/dx( "+gx+" ) + d/dx( "+fx+" ) "+gx
+			)+")";
+			/*return outHTML+Algebrite.run(
+				eqObj.coef+"*("+
+					fx+"*d("+gx+")+d("+fx+")*"+gx
+			);*/
+		case "d": // Just straight up hiddly hoodly
+			return outHTML+(eqObj.coef*(Algebrite.run("d("+eqObj.vars+")")));
+	}
+	
+	return outHTML;
+}
+
+function findOutDerivativeRule(eqObj)
+{
+	console.log(eqObj);
+	if(eqObj.vars.indexOf(" / ")!= -1)
+		return "quot_chainrule";
+	if(eqObj.vars.indexOf(" ")!= -1)
+		return "mult_chainrule";
+	return "d";
+}

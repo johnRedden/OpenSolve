@@ -100,6 +100,7 @@ function splitStringNoDuplicates(str)
 	return vars;
 }
 
+// Calculates the given equation accurately
 function calculateAccurately(inputStr)
 {
 	// Variables
@@ -127,7 +128,7 @@ function calculateAccurately(inputStr)
 			else
 			{
 				right=	splitMultAndSolve(pmArr[i]);
-				total=	Algebrite(total+"+"+left+type+right);
+				total=	Algebrite.run(total+"+"+left+type+right);
 				left=	"";
 				type=	"";
 				right=	"";
@@ -144,6 +145,7 @@ function calculateAccurately(inputStr)
 	};
 }
 
+// Replaces the known functions for the splitMultAndSolve function
 function replaceKnownFuncsForMult(str)
 {
 	// Variables
@@ -168,6 +170,7 @@ function replaceKnownFuncsForMult(str)
 	};
 }
 
+// Split the mini equation of multiplication and solve it, if bObj is true, returns it as an object
 function splitMultAndSolve(miniEQ, bObj)
 {
 	// Variables
@@ -203,7 +206,7 @@ function splitMultAndSolve(miniEQ, bObj)
 						else
 							anyOtherVars+=	" "+temp;
 					}
-				} catch(e)	{	anyOtherVars+=	splits[i];	}
+				} catch(e)	{	anyOtherVars+=	" "+splits[i];	}
 			}
 		}
 	} catch(e) { console.log(e);	}
@@ -212,15 +215,16 @@ function splitMultAndSolve(miniEQ, bObj)
 	{
 		return	{
 			coef:	coef,
-			vars:	anyOtherVars
+			vars:	anyOtherVars.trim()
 		};
 	}
 	if(anyOtherVars== "")
 		return coef;
 	else
-		return coef+" "+anyOtherVars;
+		return coef+" "+anyOtherVars.trim();
 }
 
+// Split the equation into plus and minus array: [LEFT, "ADD" or "MINUS", RIGHT]
 function splitIntoPlusMinus(inputStr)
 {
 	// Variables
@@ -242,14 +246,14 @@ function splitIntoPlusMinus(inputStr)
 		{
 			algArr[d++]=	inputStr.substring(0, plusi);
 			algArr[d++]=	"add";
-			inputStr=	inputStr.substring(plusi);
+			inputStr=	inputStr.substring(plusi+3);
 			closest=	plusi;
 		}
 		else if((plusi> minusi && minusi!= -1) || (minusi!= -1 && plusi== -1))
 		{
 			algArr[d++]=	inputStr.substring(0, minusi);
 			algArr[d++]=	"minus";
-			inputStr=	inputStr.substring(minusi);
+			inputStr=	inputStr.substring(minusi+3);
 			closest=	minusi;
 		}
 	}
