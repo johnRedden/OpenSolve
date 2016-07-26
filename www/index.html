@@ -146,8 +146,8 @@
 				
 				doCommand(inputTxt, getCommandFromHash());*/
 				
-                if(e.keyCode == 13)
-                    mathJaxDisplay(output);
+                //if(e.keyCode == 13)
+                   //mathJaxDisplay(output);
             });
             
             $('.dropdown-menu a').click(function(){
@@ -215,10 +215,11 @@
         
         function mathSimpleDisplay(arg){
             $('#mainResult').html(arg.command+'<br/>'+arg.result);
+            mathJaxDisplay(arg);
         }
         function mathJaxDisplay(arg){
             //Mathjax renders ascii math between back ticks
-            $('#niceResult').html('`'+arg.rawInput+' '+arg.result+'`<br/>');
+            $('#niceResult').html('`'+arg.command+'`<br/> `'+arg.result+'`<br/>');
             MathJax.Hub.Queue(["Typeset",MathJax.Hub,"niceResult"]);
         }
         
