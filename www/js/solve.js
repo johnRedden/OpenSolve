@@ -113,6 +113,28 @@ function calculateAccurately(inputStr)
 	try	{
 		for(var i= 0; i< pmArr.length; i++)
 		{
+			if(i+2>= pmArr.length && total!= 0)
+			{
+				if(type== "")
+				{
+					type=	pmArr[i];
+					if(type.indexOf("add")!= -1)
+						type=	" + ";
+					else if(type.indexOf("minus")!= -1)
+						type=	" - ";
+				}
+				else
+				{
+					right=	splitMultAndSolve(pmArr[i]);
+					total=	Algebrite.run(total+((type== "") ? " + " : "")+type+right);
+					left=	"";
+					type=	"";
+					right=	"";
+				}
+				
+				continue;
+			}
+			
 			if(left== "")
 			{
 				left=	splitMultAndSolve(pmArr[i]);
@@ -120,23 +142,22 @@ function calculateAccurately(inputStr)
 			else if(type== "")
 			{
 				type=	pmArr[i];
-				switch(type)
-				{
-					case "add":	type=	" + ";	break;
-					case "minus":	type=	" - ";	break;
-				}
+				if(type.indexOf("add")!= -1)
+					type=	" + ";
+				else if(type.indexOf("minus")!= -1)
+					type=	" - ";
 			}
 			else
 			{
 				right=	splitMultAndSolve(pmArr[i]);
-				total=	Algebrite.run(total+"+"+left+type+right);
+				total=	Algebrite.run(total+((type== "") ? " + " : "")+left+type+right);
 				left=	"";
 				type=	"";
 				right=	"";
 			}
 		}
 		if(left!= "")
-			total=	Algebrite.run(total+"+"+left);
+			total=	Algebrite.run(((total!= 0) ? total+" + " : "")+left);
 	}catch(e)	{	console.log(e);	}
 	
 	return {
@@ -233,7 +254,7 @@ function splitIntoPlusMinus(inputStr)
 	var	d=	0;
 	var	plusi=	0;
 	var	minusi=	0;
-	var	closest=	0;
+	//var	closest=	0;
 	
 	// Extracts the eq into plus-minus arrays 
 	while(true)
@@ -248,7 +269,7 @@ function splitIntoPlusMinus(inputStr)
 			algArr[d++]=	inputStr.substring(0, plusi);
 			algArr[d++]=	"add";
 			inputStr=	inputStr.substring(plusi+3);
-			//closest=	0;
+			//closest=	plusi;
 		}
 		else if((plusi> minusi && minusi!= -1) || (minusi!= -1 && plusi== -1))
 		{
