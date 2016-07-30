@@ -44,7 +44,13 @@
         src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
     </script>
     
-    
+    <style>
+		#writeout	{
+			color:	black;
+			font-weight:	bold;
+			font-size:	20px;
+		}
+	</style>
     
 
     <!-- Uncomment the following scripts if you convert your "Standard HTML5" project into a "Cordova" project. -->
@@ -97,6 +103,7 @@
 			<div id="ink-paper"></div>
 			<button type="button" id="seq" data-toggle="modal" data-target="#ink-modal" class="btn btn-primary">Submit</button>
 			<button type="button" id="cancel" data-toggle="modal" data-target="#ink-modal" class="btn btn-primary">Cancel</button>
+			<span id="writeout"></span>
 		</div>
         <hr>
         <p> </p>
@@ -141,6 +148,9 @@
 		
 		// Does the thing
 		function doCommand(inputTxt, cmd)	{
+			// Variables
+			var	inpcmds=	inputTxt.split(",");
+			
 			switch(cmd)
 			{
 				case "graph":
@@ -151,7 +161,7 @@
 					return;
 				case "peval":
 					try{
-						mathSimpleDisplay(calculateAccurately(inputTxt));
+						mathSimpleDisplay(calculateAccurately(inpcmds));
 					}catch(e){ console.log(e); }
 					return;
 			}
@@ -333,6 +343,7 @@
                         }
                     }
                 }
+				$("#writeout").html(innerHTML);
 				$("#userInput").val(innerHTML);
             });
             /**

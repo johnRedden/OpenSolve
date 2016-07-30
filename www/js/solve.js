@@ -101,14 +101,29 @@ function splitStringNoDuplicates(str)
 }
 
 // Calculates the given equation accurately
-function calculateAccurately(inputStr)
+function calculateAccurately(inputCmds)
 {
 	// Variables
-	var	pmArr=	splitIntoPlusMinus(Algebrite.run(inputStr));
+	var	pmArr;
 	var	total=	0;
 	var	left=	"";
 	var	right=	"";
 	var	type=	"";
+	
+	inputCmds[0]=	Algebrite.run(inputCmds[0]);
+	
+	for(var i= 1; i< inputCmds.length; i++)
+	{
+		// Variables
+		var	replacements=	inputCmds[i].split("=");
+		
+		inputCmds[0]=	inputCmds[0].replace(
+			new RegExp(replacements[0].trim(), "g"),
+			replacements[1].trim()
+		);
+	}
+	
+	pmArr=	splitIntoPlusMinus(Algebrite.run(inputCmds[0]));
 	
 	try	{
 		for(var i= 0; i< pmArr.length; i++)
@@ -120,10 +135,11 @@ function calculateAccurately(inputStr)
 			else if(type== "")
 			{
 				type=	pmArr[i];
-				if(type== "add")
-					type=	" + ";
-				else
-					type=	" - ";
+				switch(type)
+				{
+					case "add":	type=	" + ";	break;
+					case "minus":	type=	" - ";	break;
+				}
 			}
 			else
 			{
@@ -139,8 +155,8 @@ function calculateAccurately(inputStr)
 	}catch(e)	{	console.log(e);	}
 	
 	return {
-		rawInput:	inputStr,
-		command: "eval( "+inputStr+" )",
+		rawInput:	inputCmds[0],
+		command: "eval( "+inputCmds[0]+" )",
 		result:	"= "+Algebrite.run(total)
 	};
 }
@@ -237,8 +253,8 @@ function splitIntoPlusMinus(inputStr)
 	// Extracts the eq into plus-minus arrays 
 	while(true)
 	{
-		plusi=	inputStr.indexOf(" + ", closest);
-		minusi=	inputStr.indexOf(" - ", closest);
+		plusi=	inputStr.indexOf(" + ");
+		minusi=	inputStr.indexOf(" - ");
 		
 		if(plusi== -1 && minusi== -1)
 			break;
@@ -247,19 +263,107 @@ function splitIntoPlusMinus(inputStr)
 			algArr[d++]=	inputStr.substring(0, plusi);
 			algArr[d++]=	"add";
 			inputStr=	inputStr.substring(plusi+3);
-			closest=	plusi;
+			//closest=	0;
 		}
 		else if((plusi> minusi && minusi!= -1) || (minusi!= -1 && plusi== -1))
 		{
 			algArr[d++]=	inputStr.substring(0, minusi);
 			algArr[d++]=	"minus";
 			inputStr=	inputStr.substring(minusi+3);
-			closest=	minusi;
+			//closest=	minusi;
 		}
 	}
 	algArr[d]=	inputStr;
 	
 	return algArr;
+}
+
+// wip
+function splitParenths(str)
+{
+	// Variables
+	var	arr=	[];
+	var	lp=	0;
+	var	rp=	0;
+	var	d=	0;
+	
+	while(true)	{
+		lp=	str.indexOf("(");
+		rp=	str.indexOf(")");
+		
+		if(lp== -1 && rp== -1)
+			break;
+		else if((rp> lp && lp!= -1) || (lp!= -1 && rp== -1))
+		{
+			arr[d++]=	str.substring(0, lp);
+			arr[d++]=	"pstart";
+			str=	str.substring(lp+1);
+		}
+		else if((lp> rp && rp!= -1) || (lp!= -1 && rp== -1))
+		{
+			arr[d++]=	str.substring(0, rp);
+			arr[d++]=	"pend";
+			str=	str.substring(rp+1);
+		}
+		arr[d]=	str;
+		
+		return arr;
+	};
+}
+
+// wip
+function split(str, parenths, plusminus)
+{
+	// Variables
+	var	arr=	[str];
+	
+	if(parenths)
+	{
+		arr=	splitParenths(arr[0]);
+	}
+	if(plusminus)
+	{
+		// Variables
+		var	temp=	[];
+		var	temp2=	[];
+		d=	0;
+		
+		for(var i= 0; i< arr.length; i++)
+		{
+			if(arr[i]== "pstart" || arr[i]== "pend")
+			{
+				temp[d++]=	arr[i];
+				continue;
+			}
+			
+			temp2=	splitPlusMinus(arr[i]);
+			for(var k= 0; k< temp2.length; k++)
+				temp[d++]=	temp2[k];
+		}
+	}
+	
+	if(parenths)
+	{
+		// Variables
+		var	arrarr=	[];
+		var	h=	0;
+		var	k=	0;
+		
+		for(var i= 0; i< arr.length; i++)
+		{
+			if(arr[i]== "pstart")
+				continue;
+			if(arr[i]== "pend")
+			{
+				h++;
+				k=	0;
+				continue;
+			}
+			arrarr[h][k++]=	arr[i];
+		}
+	}
+	
+	return arr;
 }
 
 // End of File
