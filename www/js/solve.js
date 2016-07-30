@@ -101,29 +101,14 @@ function splitStringNoDuplicates(str)
 }
 
 // Calculates the given equation accurately
-function calculateAccurately(inputCmds)
+function calculateAccurately(inputStr)
 {
 	// Variables
-	var	pmArr;
+	var	pmArr=	splitIntoPlusMinus(Algebrite.run(inputStr));
 	var	total=	0;
 	var	left=	"";
 	var	right=	"";
 	var	type=	"";
-	
-	inputCmds[0]=	Algebrite.run(inputCmds[0]);
-	
-	for(var i= 1; i< inputCmds.length; i++)
-	{
-		// Variables
-		var	replacements=	inputCmds[i].split("=");
-		
-		inputCmds[0]=	inputCmds[0].replace(
-			new RegExp(replacements[0].trim(), "g"),
-			replacements[1].trim()
-		);
-	}
-	
-	pmArr=	splitIntoPlusMinus(Algebrite.run(inputCmds[0]));
 	
 	try	{
 		for(var i= 0; i< pmArr.length; i++)
@@ -155,8 +140,8 @@ function calculateAccurately(inputCmds)
 	}catch(e)	{	console.log(e);	}
 	
 	return {
-		rawInput:	inputCmds[0],
-		command: "eval( "+inputCmds[0]+" )",
+		rawInput:	inputStr,
+		command: "eval( "+inputStr+" )",
 		result:	"= "+Algebrite.run(total)
 	};
 }

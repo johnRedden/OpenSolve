@@ -146,10 +146,36 @@
 			return $(".dropdown-menu a[href='"+hash+"']").text();
 		}
 		
+		// Replaces the input text
+		function replaceInputTxt(inpcmds)
+		{
+			// Variables
+			var	replacements;
+			
+			for(var i= 1; i< inpcmds.length; i++)
+			{
+				replacements=	inpcmds[i].split("=");
+				
+				if(replacements.length== 1)
+					continue;
+				
+				inpcmds[0]=	inpcmds[0].replace(
+					new RegExp(replacements[0].trim(), "g"),
+					" "+replacements[1].trim()+" "
+				);
+			}
+			
+			return inpcmds[0];
+		}
+		
 		// Does the thing
 		function doCommand(inputTxt, cmd)	{
 			// Variables
 			var	inpcmds=	inputTxt.split(",");
+			
+			inputTxt=	replaceInputTxt(inpcmds);
+			
+			$("#steps").hide();
 			
 			switch(cmd)
 			{
@@ -161,7 +187,7 @@
 					return;
 				case "peval":
 					try{
-						mathSimpleDisplay(calculateAccurately(inpcmds));
+						mathSimpleDisplay(calculateAccurately(inputTxt));
 					}catch(e){ console.log(e); }
 					return;
 			}
@@ -171,7 +197,16 @@
 			
 			
 			//steps for solving detected here
-			if(cmd=='roots' || cmd== "d") $('#steps').html(mathSolve(inputTxt)) ;
+			if(cmd=='roots')
+			{
+				$("#steps").show();
+				$('#steps').html(mathSolve(inputTxt));
+			}
+			if(cmd== "d")
+			{
+				$("#steps").show();
+				$('#steps').html(startsStepsForDerivative(inputTxt));
+			}
 		}
         
         $('document').ready(function(){
@@ -270,12 +305,6 @@
         }
         
         function mathSolve(arg){
-            
-			if(getCommandFromHash()== "d")
-			{
-				console.log(arg);
-				return startsStepsForDerivative(arg);
-			}
 			
             var lhs = arg.substr(0,arg.indexOf('='));
             var rhs = arg.substr(arg.indexOf('=')+1, arg.length);
