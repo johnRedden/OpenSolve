@@ -5,7 +5,7 @@
   Rachel made a change!
   -->
 <head>
-    <title>Open CAS</title>
+    <title>Open Solve</title>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 
     <!-- see http://webdesign.tutsplus.com/tutorials/htmlcss-tutorials/quick-tip-dont-forget-the-viewport-meta-tag -->
@@ -107,11 +107,11 @@
 		</div>
         <hr>
         <p> </p>
-        <pre id="mainResult" class="text-center">Algebrite onKeyup Ascii Math</pre>
+        <pre id="errorScreen" class="text-center">Sorry, an error has appeared. Please try again</pre>
         <p> </p>
         <div id="niceResult" class="well text-center"  class="text-center">Enter for nice display.</div>
         <p> </p>
-        <pre id="steps" class="text-center">Steps Maybe</pre>
+        <div id="steps" class="well text-center">Steps Maybe</div>
         <p> </p>
         <a href="http://algebrite.org/reference.html" target="_blank">Algebrite Function Ref.</a><br/>
         <a href="http://asciimath.org/" target="_blank">Ascii math Ref.</a>
@@ -161,7 +161,7 @@
 				
 				inpcmds[0]=	inpcmds[0].replace(
 					new RegExp(replacements[0].trim(), "g"),
-					" "+replacements[1].trim()+" "
+					" ("+replacements[1].trim()+") "
 				);
 			}
 			
@@ -175,6 +175,8 @@
 			
 			inputTxt=	replaceInputTxt(inpcmds);
 			
+			$("#errorScreen").hide();
+			$("#niceResult").hide();
 			$("#steps").hide();
 			
 			switch(cmd)
@@ -188,30 +190,56 @@
 				case "peval":
 					try{
 						mathSimpleDisplay(calculateAccurately(inputTxt));
+						
+						//$("#mainResult").show();
+						$("#niceResult").show();
 					}catch(e){ console.log(e); }
 					return;
 			}
 			
 			var output = mathWorks(inputTxt, cmd);
+			
+			if(output.result.indexOf("Stop:")!= -1)
+			{
+				$("#errorScreen").show();
+				return;
+			}
+			
 			mathSimpleDisplay(output);
 			
+			//$("#mainResult").show();
+			$("#niceResult").show();
 			
 			//steps for solving detected here
 			if(cmd=='roots')
 			{
 				$("#steps").show();
 				$('#steps').html(mathSolve(inputTxt));
+				var	dontshowerr=	$("#steps").html();
+				
+				if(dontshowerr.indexOf("Stop:")!= -1)
+					$("#steps").hide();
+				else
+					MathJax.Hub.Queue(["Typeset",MathJax.Hub,"steps"]);
 			}
 			if(cmd== "d")
 			{
 				$("#steps").show();
 				$('#steps').html(startsStepsForDerivative(inputTxt));
+				var	dontshowerr=	$("#steps").html();
+				
+				if(dontshowerr.indexOf("Stop:")!= -1)
+					$("#steps").hide();
+				else
+					MathJax.Hub.Queue(["Typeset",MathJax.Hub,"steps"]);
 			}
 		}
         
         $('document').ready(function(){
             //Your awesome javascript goes here.
-            
+            $("#errorScreen").hide();
+			$("#niceResult").hide();
+			$("#steps").hide();
             $('#userInput').on('keyup',function(e){
                 /*var inputTxt = $(this).val().trim();
 				

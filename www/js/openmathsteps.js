@@ -7,13 +7,13 @@ function mathSolveGeneralLinear(lhs, rhs, eqVar){
     //Quote the original ascii input (quote is not what I expected?)
     var origlhs = Algebrite.run('quote('+lhs+')');
     var origrhs = Algebrite.run('quote('+rhs+')');
-    outHTML += origlhs +' = '+origrhs+'<br/>';
+    outHTML += "`"+origlhs +' = '+origrhs+'`<br/>';
 
     //outHTML += 'Add same-side like terms.<br/>';
     var newlhs = Algebrite.run(lhs);
     var newrhs = Algebrite.run(rhs);
     if(origlhs!=newlhs || origrhs!=newrhs){
-        outHTML += newlhs +' = '+newrhs+'<br/>';
+        outHTML += "`"+newlhs +' = '+newrhs+'`<br/>';
         origlhs=newlhs;
         origrhs=newrhs;
     }
@@ -23,7 +23,7 @@ function mathSolveGeneralLinear(lhs, rhs, eqVar){
     newlhs = Algebrite.run(origlhs+'+('+likeTerm+'x)');
     newrhs = Algebrite.run(origrhs+'+('+likeTerm+'x)');
     if(origlhs!=newlhs || origrhs!=newrhs){
-        outHTML += newlhs +' = '+newrhs+'<br/>';
+        outHTML += "`"+newlhs +' = '+newrhs+'`<br/>';
         origlhs=newlhs;
         origrhs=newrhs;
     }
@@ -36,7 +36,7 @@ function mathSolveGeneralLinear(lhs, rhs, eqVar){
         newlhs = Algebrite.run(origlhs+'+('+constTerm+')');
         newrhs = Algebrite.run(origrhs+'+('+constTerm+')');
         if(origlhs!=newlhs || origrhs!=newrhs){
-            outHTML += newlhs +' = '+newrhs+'<br/>';
+            outHTML += "`"+newlhs +' = '+newrhs+'`<br/>';
             origlhs=newlhs;
             origrhs=newrhs;
         }
@@ -47,7 +47,7 @@ function mathSolveGeneralLinear(lhs, rhs, eqVar){
         newlhs = Algebrite.run('('+origlhs+')'+'/('+leadCoeff+')');
         newrhs = Algebrite.run('('+origrhs+')'+'/('+leadCoeff+')');
         if(origlhs!=newlhs || origrhs!=newrhs){
-            outHTML += newlhs +' = '+newrhs+'<br/>';
+            outHTML += "`"+newlhs +' = '+newrhs+'`<br/>';
             origlhs=newlhs;
             origrhs=newrhs;
         }              
@@ -70,13 +70,13 @@ function mathSolveGeneralQuadratic(lhs,rhs,eqVar){
     //Quote the original ascii input (quote is not what I expected?)
     var origlhs = Algebrite.run('quote('+lhs+')');
     var origrhs = Algebrite.run('quote('+rhs+')');
-    outHTML += origlhs +' = '+origrhs+'<br/>';
+    outHTML += "`"+origlhs +' = '+origrhs+'`<br/>';
 
     //outHTML += 'Simplify both sides.<br/>';
     var newlhs = Algebrite.run(lhs);
     var newrhs = Algebrite.run(rhs);
     if(origlhs!=newlhs || origrhs!=newrhs){
-        outHTML += newlhs +' = '+newrhs+'<br/>';
+        outHTML += "`"+newlhs +' = '+newrhs+'`<br/>';
         origlhs=newlhs;
         origrhs=newrhs;
     }
@@ -93,7 +93,7 @@ function mathSolveGeneralQuadratic(lhs,rhs,eqVar){
             return outHTML;
         }
         
-        outHTML += newlhs +' = '+newrhs+'<br/>';
+        outHTML += "`"+newlhs +' = '+newrhs+'`<br/>';
         origlhs=newlhs;
         origrhs=newrhs;
     }
@@ -103,7 +103,7 @@ function mathSolveGeneralQuadratic(lhs,rhs,eqVar){
     newlhs = Algebrite.run('factor('+origlhs+')');
     if(origlhs!=newlhs){
          //tag factorable
-        outHTML += newlhs +' = '+newrhs+'<br/>';
+        outHTML += "`"+newlhs +' = '+newrhs+'`<br/>';
         origlhs=newlhs;
         origrhs=newrhs;
        
@@ -121,7 +121,7 @@ function mathSolveGeneralQuadratic(lhs,rhs,eqVar){
 
         var temp1HTML = mathSolveGeneralLinear(linear1,'0','x');
         var temp2HTML = mathSolveGeneralLinear(linear2,'0','x');
-        outHTML += '<table align="center"><tr><td style="padding:10px" valign="top">'+temp1HTML+'</td><td style="padding:10px" valign="top">'+temp2HTML+'</td></tr></table>'       
+        outHTML += '<table align="center"><tr><td style="padding:10px" valign="top">`'+temp1HTML+'`</td><td style="padding:10px" valign="top">`'+temp2HTML+'`</td></tr></table>'       
         
     }else{
         //a whole stand-alone function will allow for two methods
@@ -140,13 +140,13 @@ function mathSolveGeneralQuadraticFormula(lhs,rhs,eqVar){
     var b = Algebrite.run('coeff('+lhs+','+eqVar+',1)');
     var c = Algebrite.run('coeff('+lhs+','+eqVar+',0)');
     
-    outHTML += 'a = '+a+', b = '+b+', c = '+c+'<br/>';
-    outHTML += eqVar+' = ( -b ± sqrt(b^2-4ac) ) / (2a)<br/>';
-    outHTML += eqVar+' = ( -('+b+') ± sqrt(('+b+')^2-4('+a+')('+c+')) ) / (2('+a+'))<br/>';
+    outHTML += '`a = '+a+', b = '+b+', c = '+c+'`<br/>';
+    outHTML += "`"+eqVar+' = ( -b ± sqrt(b^2-4ac) ) / (2a)`<br/>';
+    outHTML += "`"+eqVar+' = ( -('+b+') ± sqrt(('+b+')^2-4('+a+')('+c+')) ) / (2('+a+'))`<br/>';
     var descrim = Algebrite.run('('+b+')^2-4('+a+')('+c+')');
     var denom = Algebrite.run('(2('+a+'))');
     var oppb = Algebrite.run('-1*('+b+')');
-    outHTML += eqVar+' = ( '+oppb+' ± sqrt('+descrim+') ) / '+denom+'<br/>';
+    outHTML += "`"+eqVar+' = ( '+oppb+' ± sqrt('+descrim+') ) / '+denom+'`<br/>';
     //now need to reduce somehow.
     
     
@@ -156,12 +156,27 @@ function mathSolveGeneralQuadraticFormula(lhs,rhs,eqVar){
 function startsStepsForDerivative(inputStr)
 {
 	// Variables
-	var	outHTML=	inputStr+"<br/>";
+	var	outHTML=	"`"+inputStr+"`<br/>";
 	var	pmArr=	splitIntoPlusMinus(Algebrite.run(inputStr));
 	var	a=	"";
 	
 	for(var i= 0; i< pmArr.length; i++)
 	{
+		if(i+2>= pmArr.length && a!= "")
+		{
+			if(pmArr[i].indexOf("add")!= -1)
+				a+=	" + ";
+			else if(pmArr[i].indexOf("minus")!= -1)
+				a+=	" - ";
+			i++;
+			a=	doStepForDerivative(
+				splitMultAndSolve(pmArr[i], true),
+				a,
+				findOutDerivativeRule(splitMultAndSolve(pmArr[i], true))
+			);
+			
+			continue;
+		}
 		a=	doStepForDerivative(
 			splitMultAndSolve(pmArr[i], true),
 			a,
@@ -181,10 +196,10 @@ function startsStepsForDerivative(inputStr)
 			findOutDerivativeRule(splitMultAndSolve(pmArr[i], true))
 		);
 	}
-	outHTML+=	a+"<br/>";
+	outHTML+=	"`"+a+"`<br/>";
 	a=	a.replace(/d\/dx/g, "d");
 	a=	Algebrite.run(a);
-	outHTML+=	a;
+	outHTML+=	"`"+a+"`";
 	
 	return outHTML;
 }
@@ -230,7 +245,8 @@ function doStepForDerivative(eqObj, outHTML, rule)
 
 function findOutDerivativeRule(eqObj)
 {
-	console.log(eqObj);
+	if(eqObj== undefined)
+		return	"na";
 	if(eqObj.vars.indexOf(" / ")!= -1)
 		return "quot_chainrule";
 	if(eqObj.vars.indexOf(" ")!= -1)

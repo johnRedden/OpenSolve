@@ -195,6 +195,9 @@ function replaceKnownFuncsForMult(str)
 // Split the mini equation of multiplication and solve it, if bObj is true, returns it as an object
 function splitMultAndSolve(miniEQ, bObj)
 {
+	if(miniEQ== undefined || miniEQ== null)
+		return;
+	
 	// Variables
 	var	splits=	miniEQ.split(" ");
 	var	coef=	1;
@@ -237,7 +240,7 @@ function splitMultAndSolve(miniEQ, bObj)
 	{
 		return	{
 			coef:	coef,
-			vars:	anyOtherVars.trim()
+			vars:	((anyOtherVars== "") ? "" : anyOtherVars.trim())
 		};
 	}
 	if(anyOtherVars== "")
