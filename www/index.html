@@ -78,11 +78,13 @@
                   <li><a href="#solve" command="roots">Solve</a></li>
                   <li><a href="#derivative" command="d">Derivative</a></li>
 				  <li><a href="#integral" command="integral">Integral</a></li>
+				  <!-- Having trouble with this
                   <li role="separator" class="divider"></li>
 				  <li>
 					<a href="#gcd" command="gcd">Greatest Common Denominator</a>
 					<a href="#lcm" command="lcm">Least Common Multiple</a>
 				  </li>
+				  <!--/-->
                   <li role="separator" class="divider"></li>
 				  <li><a href="#" command="graph">Graph</a></li>
                   <li><a href="#" command="notreal">More Commands Soon!</a></li>
@@ -132,9 +134,9 @@
 				case "simplify":	return "simplify";
 				case "solve":	return "roots";
 				case "derivative":	return "d";
-				//case "integral":	return "integral";
-				case "gcd":	return "gcd";
-				case "lcm":	return "lcm";
+				case "integral":	return "integral";
+				//case "gcd":	return "gcd"; // Having trouble with this, something to do with a ' , '
+				//case "lcm":	return "lcm"; // Having trouble with this, something to do with a ' , '
 				default:	return "";
 			}
 		}
