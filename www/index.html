@@ -257,20 +257,20 @@
 				
 				doCommand(inputTxt, cmd);
 				
-				switch(cmd)	{
+				/*switch(cmd)	{
 					default:	$("#actionbutton").html($(this).text()+" <span class='caret'></span>");	break;
 					case "":
 					case "graph":
 					case "notreal":
 						$("#actionbutton").html("Action <span class='caret'></span>");
 						break;
-				}
+				}*/
             });
             
-			if(location.hash && location.hash.length> 1)
+			/*if(location.hash && location.hash.length> 1)
 			{
 				$("#actionbutton").html(getDropdownText(location.hash)+" <span class='caret'></span>");
-			}
+			}*/
 			
 			$("#writebutton").click(function()	{
 				paper.clear();
@@ -296,6 +296,9 @@
                     resultTxt="Enter Ascii Math";
             else
                     resultTxt = '= '+Algebrite.run(commandStr);
+			
+			if(command== "integral")
+				resultTxt+=	" + C";
             
             return {
                 rawInput: asciiMath,
